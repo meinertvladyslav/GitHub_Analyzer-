@@ -17,6 +17,7 @@
   </build>
   <dependencies>
   <dependency>
+  <!--Added dependencies, so Maven could install them for me,and I wouldnt have to do it-->
   <groupId>org.kohsuke</groupId>
     <artifactId>github-api</artifactId>
     <version>1.330</version>
