@@ -1,4 +1,5 @@
 package GitHub;
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.kohsuke.github.GHRepository;
@@ -11,25 +12,18 @@ public class Analyzer {
 		Scanner scan = new Scanner(System.in);	
 		String url = "";
 		String auth_token = System.getenv("token");
-		GitHub github = GitHub.connectUsingOAuth(auth_token);
 		
-		
-		System.out.println("Enter your url here: ");
-		url = scan.nextLine();
-		url = repoFromUrl(url);
 		if (auth_token == null || auth_token.isBlank()) {
             throw new IllegalStateException("Failed to get the token");
         }
 		
-        GHRepository repo = github.getRepository(url);
+		System.out.println("Enter your url here: ");
+		url = scan.nextLine();
+		
+		
+        
 
-        System.out.println("Name: " + repo.getName());
-        System.out.println("Description: " + repo.getDescription());
-        System.out.println("Stars: " + repo.getStargazersCount());
-        System.out.println("Language: " + repo.getLanguage());
-        System.out.println("Stars: " + repo.getOwnerName());
-        System.out.println("Language: " + repo.getSize());
-        System.out.println("br: " + repo.getDefaultBranch());
+       display(auth_token, url);
 	}
 	private static String repoFromUrl(String url) {
 	    // Remove trailing slash if present
@@ -43,5 +37,26 @@ public class Analyzer {
 	    //returns owner/repo names to use as correct url for git
 	    return owner + "/" + repo;
 	}
+	static void display( String auth_token,String url) throws IOException {
+		GitHub github = GitHub.connectUsingOAuth(auth_token);
+		url = repoFromUrl(url);
+		GHRepository repo = github.getRepository(url);
+		
+		 System.out.println("Name: " + repo.getName());
+		 System.out.println("Owner's name: " + repo.getOwnerName());
+		 if (repo.getDescription() == null || repo.getDescription().isBlank()) {
+		 System.out.println("No description yet");
+		 }else System.out.println("Description: " + repo.getDescription());
+		 
+	        System.out.println("Stars: " + repo.getStargazersCount());
+	        if (repo.listLanguages().isEmpty() || repo.listLanguages() == null) {
+	   		 System.out.println("No languages yet, or it is to small for github to detect");
+	   		 }else
+	        System.out.println("Language: " + repo.listLanguages());
+	        
+	        System.out.println("Size of repositery: " + repo.getSize());
+	        System.out.println("Default branch: " + repo.getDefaultBranch());
+	}
+
 }
 
